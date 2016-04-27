@@ -10,7 +10,7 @@ def application do
 end
 
 defp deps do
-  [{:hrafn, "~> 0.0.1"}]
+  [{:hrafn, github: "twined/hrafn"}]
 end
 ```
 
