@@ -121,9 +121,9 @@ defmodule Hrafn.Notifier do
     Map.put(payload, :extra, Map.put(extra, key, value))
   end
 
-  @doc """
-  Parses a Sentry DSN which is simply a URI
-  """
+
+  # Parses a Sentry DSN which is simply a URI
+  #
   defp parse_dsn(dsn) do
     %URI{userinfo: userinfo, host: host, path: path, scheme: protocol} = URI.parse(dsn)
     [public_key, secret_key] = userinfo |> String.split(":", parts: 2)
@@ -143,17 +143,16 @@ defmodule Hrafn.Notifier do
     "sentry_timestamp=#{timestamp}, sentry_key=#{public_key}, sentry_secret=#{secret_key}"
   end
 
-  @doc """
-  Get unix epoch timestamp
-  """
+
+  # Get unix epoch timestamp
+  #
   defp unix_timestamp do
     {mega, sec, _micro} = :os.timestamp()
     mega * (1000000 + sec)
   end
 
-  @doc """
-  Get current timestamp in iso8601
-  """
+  # Get current timestamp in iso8601
+  #
   defp iso8601_timestamp do
     [year, month, day, hour, minute, second] =
       :calendar.universal_time
