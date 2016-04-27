@@ -1,5 +1,3 @@
-Elixir [Sentry](https://getsentry.com) client for [Brando](http://github.com/twined/brando) applications.
-
 ## Installation
 
 Add Hrafn as a dependency to your `mix.exs` file:
