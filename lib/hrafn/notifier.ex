@@ -5,35 +5,36 @@ defmodule Hrafn.Notifier do
   @sentry_client "hrafn"
   @logger "Hrafn"
 
-  def notify(error, conn, otp_app) do
+  def notify(error, opts) do
     case Application.get_env(:hrafn, :dsn) do
       dsn when is_bitstring(dsn) ->
-        build_notification(error, conn, otp_app)
+        build_notification(error, opts)
         |> send_notification(dsn |> parse_dsn)
       _ -> :error
     end
   end
 
-  def build_notification(error, conn, otp_app) do
-    conn = Plug.Conn.fetch_session(conn)
+  def build_notification(error, opts) do
+    conn = Plug.Conn.fetch_session(opts.conn)
     session = Map.get(conn.private, :plug_session)
+    request_id = Plug.Conn.get_resp_header(conn, "x-request-id") || ""
     current_user = Map.get(session, "current_user", %{})
+    otp_app = Map.get(opts, :otp_app)
+
     remote_ip =
       conn
       |> Map.get(:remote_ip, {0, 0, 0, 0})
       |> Tuple.to_list
       |> Enum.join(".")
 
-    %{
-      event_id: UUID.uuid4(:hex),
-      message: error[:message],
+    %Hrafn.Event{
+      event_id: opts.event_id,
+      message: error.message,
       tags: Application.get_env(:hrafn, :tags, %{}),
       server_name: :net_adm.localhost |> to_string,
       timestamp: iso8601_timestamp,
       environment: Application.get_env(:hrafn, :environment, nil),
-      platform: "other",
-      level: Application.get_env(:hrafn, :logger_level, "error"),
-      extra: %{},
+      level: Application.get_env(:hrafn, :logger_level, "error")
     }
     |> add_logger
     |> add_device
@@ -42,6 +43,7 @@ defmodule Hrafn.Notifier do
     |> add_user(current_user, remote_ip)
     |> add_http(conn)
     |> add_extra(:session, session)
+    |> add_extra(:request_id, request_id)
   end
 
   def send_notification(payload, {endpoint, public_key, private_key}) do
@@ -101,9 +103,9 @@ defmodule Hrafn.Notifier do
 
   defp add_error(payload, error) do
     exception = %{
-      type: error[:type],
-      value: error[:message]
-    } |> add_stacktrace(error[:backtrace])
+      type: error.type,
+      value: error.message
+    } |> add_stacktrace(error.backtrace)
 
     Map.put(payload, :exception, [exception])
   end

@@ -11,6 +11,7 @@ defmodule Hrafn.Plug do
   defmacro __before_compile__(env) do
     otp_app = Module.get_attribute(env.module, :otp_app)
     ignored_exceptions = Application.get_env(:hrafn, :ignored_exceptions, [])
+    public_dsn = Application.get_env(:hrafn, :public_dsn, nil)
 
     quote location: :keep do
       defoverridable [call: 2]
@@ -27,11 +28,26 @@ defmodule Hrafn.Plug do
                 Map.get(exception, :__struct__, nil)
               end
 
-            unless real_exception in unquote(ignored_exceptions) do
-              exception
-              |> Hrafn.ExceptionParser.parse
-              |> Hrafn.Notifier.notify(conn, unquote(otp_app))
-            end
+            options =
+              %{}
+              |> Map.put(:otp_app, unquote(otp_app))
+              |> Map.put(:conn, conn)
+              |> Map.put(:event_id, UUID.uuid4(:hex))
+
+            exception =
+              if real_exception in unquote(ignored_exceptions) do
+                exception
+              else
+                exception
+                |> Hrafn.ExceptionParser.parse
+                |> Hrafn.Notifier.notify(options)
+
+                private =
+                  exception.conn.private
+                  |> Map.put(:hrafn_event_id, options.event_id)
+                  |> Map.put(:hrafn_public_dsn, unquote(public_dsn))
+                put_in(exception.conn.private, private)
+              end
 
             reraise exception, System.stacktrace
         end

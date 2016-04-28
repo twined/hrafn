@@ -1,6 +1,6 @@
 defmodule Hrafn.ExceptionParser do
   def parse(exception) do
-    %{
+    %Hrafn.Exception{
       type: exception.__struct__,
       message: Exception.message(exception),
       backtrace: stacktrace(System.stacktrace)
@@ -9,14 +9,14 @@ defmodule Hrafn.ExceptionParser do
 
   defp stacktrace(stacktrace) do
     Enum.map stacktrace, fn
-      ({ module, function, args, [] }) ->
-        %{
+      ({module, function, args, []}) ->
+        %Hrafn.Stacktrace{
           filename: "unknown",
           lineno: 0,
           function: "#{module}.#{function}#{args(args)}"
         }
-      ({ module, function, args, [file: file, line: line_number] }) ->
-        %{
+      ({module, function, args, [file: file, line: line_number]}) ->
+        %Hrafn.Stacktrace{
           filename: "(#{module}) #{List.to_string(file)}",
           lineno: line_number,
           function: "#{function}#{args(args)}"
