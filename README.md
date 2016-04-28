@@ -19,6 +19,7 @@ Then run `mix deps.get` in your shell to fetch the dependencies.
 ```elixir
 config :hrafn,
   dsn: "https://xxx:yyy@app.getsentry.com/12345",
+  public_dsn: "https://xxx@app.getsentry.com/12345",
   logger_level: :error,
   environment: :prod,
   ignored_exceptions: [Ecto.NoResultsError, Phoenix.Router.NoRouteError]
