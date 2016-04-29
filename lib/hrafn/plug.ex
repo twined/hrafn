@@ -22,8 +22,12 @@ defmodule Hrafn.Plug do
         rescue
           exception ->
             real_exception =
-              if exception.__struct__ == Plug.Conn.WrapperError do
-                Map.get(exception.reason, :__struct__, nil)
+              if Map.get(exception, :__struct__) == Plug.Conn.WrapperError do
+                if is_map(exception.reason) do
+                  Map.get(exception.reason, :__struct__, nil)
+                else
+                  exception.reason
+                end
               else
                 Map.get(exception, :__struct__, nil)
               end
