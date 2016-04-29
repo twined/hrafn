@@ -6,10 +6,25 @@ defmodule Hrafn.Notifier do
   @logger "Hrafn"
 
   def notify(error, opts) do
+    with {:ok, dsn} <- get_dsn,
+         {:ok, :notify} <- should_notify
+      do build_notification(error, opts)
+         |> send_notification(dsn)
+    end
+  end
+
+  defp should_notify do
+    env = System.get_env("MIX_ENV") || "dev"
+    if String.to_atom(env) == Application.get_env(:hrafn, :environment, nil) do
+      {:ok, :notify}
+    else
+      {:error, :ignore}
+    end
+  end
+
+  defp get_dsn do
     case Application.get_env(:hrafn, :dsn) do
-      dsn when is_bitstring(dsn) ->
-        build_notification(error, opts)
-        |> send_notification(dsn |> parse_dsn)
+      dsn when is_bitstring(dsn) -> parse_dsn(dsn)
       _ -> :error
     end
   end
@@ -131,7 +146,7 @@ defmodule Hrafn.Notifier do
     [public_key, secret_key] = userinfo |> String.split(":", parts: 2)
     {project_id, _} = path |> String.slice(1..-1) |> Integer.parse
     endpoint = "#{protocol}://#{host}/api/#{project_id}/store/"
-    {endpoint, public_key, secret_key}
+    {:ok, {endpoint, public_key, secret_key}}
   end
 
   @doc """
