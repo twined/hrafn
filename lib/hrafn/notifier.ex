@@ -15,6 +15,7 @@ defmodule Hrafn.Notifier do
 
   defp should_notify do
     env = System.get_env("MIX_ENV") || "dev"
+
     if String.to_atom(env) == Application.get_env(:hrafn, :environment, nil) do
       {:ok, :notify}
     else
@@ -30,11 +31,11 @@ defmodule Hrafn.Notifier do
   end
 
   def build_notification(error, opts) do
-    conn = Plug.Conn.fetch_session(opts.conn)
-    session = Map.get(conn.private, :plug_session)
-    request_id = Plug.Conn.get_resp_header(conn, "x-request-id") || ""
+    conn         = Plug.Conn.fetch_session(opts.conn)
+    session      = Map.get(conn.private, :plug_session)
+    request_id   = Plug.Conn.get_resp_header(conn, "x-request-id") || ""
     current_user = Map.get(session, "current_user", %{})
-    otp_app = Map.get(opts, :otp_app)
+    otp_app      = Map.get(opts, :otp_app)
 
     remote_ip =
       conn
@@ -43,13 +44,13 @@ defmodule Hrafn.Notifier do
       |> Enum.join(".")
 
     %Hrafn.Event{
-      event_id: opts.event_id,
-      message: error.message,
-      tags: Application.get_env(:hrafn, :tags, %{}),
+      event_id:    opts.event_id,
+      message:     error.message,
+      tags:        Application.get_env(:hrafn, :tags, %{}),
       server_name: :net_adm.localhost |> to_string,
-      timestamp: iso8601_timestamp,
+      timestamp:   iso8601_timestamp,
       environment: Application.get_env(:hrafn, :environment, nil),
-      level: Application.get_env(:hrafn, :logger_level, "error")
+      level:       Application.get_env(:hrafn, :logger_level, "error")
     }
     |> add_logger
     |> add_device
@@ -153,9 +154,7 @@ defmodule Hrafn.Notifier do
   Generates a Sentry API authorization header.
   """
   def authorization_header(public_key, secret_key, timestamp \\ nil) do
-    unless timestamp do
-      timestamp = unix_timestamp
-    end
+    timestamp = timestamp && timestamp || unix_timestamp
     "Sentry sentry_version=#{@sentry_version}, sentry_client=#{@sentry_client}, " <>
     "sentry_timestamp=#{timestamp}, sentry_key=#{public_key}, sentry_secret=#{secret_key}"
   end
