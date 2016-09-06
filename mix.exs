@@ -35,9 +35,9 @@ defmodule Hrafn.Mixfile do
 
   defp deps do
     [
-      {:httpoison, "~> 0.8"},
-      {:poison, "~> 2.0"},
-      {:uuid, "~> 1.1.3"},
+      {:httpoison, "~> 0.9"},
+      {:poison, "~> 2.2"},
+      {:uuid, "~> 1.1"},
     ]
   end
 end
