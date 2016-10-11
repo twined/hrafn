@@ -7,7 +7,7 @@ defmodule Hrafn.Mixfile do
       version: "0.1.0",
       elixir: "~> 1.2",
       description: """
-      Elixir Sentry client
+      Hrafn client for Twined projects
       """,
       package: package,
       deps: deps
@@ -28,6 +28,7 @@ defmodule Hrafn.Mixfile do
         :idna,
         :hackney,
         :httpoison,
+        :plug,
         :uuid
       ]
     ]
@@ -36,7 +37,8 @@ defmodule Hrafn.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.9"},
-      {:poison, "~> 2.2"},
+      {:poison, "~> 2.2 or ~> 3.0"},
+      {:plug, "~> 1.2"},
       {:uuid, "~> 1.1"},
     ]
   end
