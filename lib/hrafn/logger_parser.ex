@@ -7,7 +7,9 @@ defmodule Hrafn.LoggerParser do
     type = Regex.named_captures(@type_regex, msg)["type"]
 
     messages =
-      Enum.filter_map String.split(msg, "\n"), &(!Regex.match?(@stacktrace_regex, &1) && !Regex.match?(@exception_header_regex, &1)), fn(lineno) ->
+      Enum.filter_map String.split(msg, "\n"), &(!Regex.match?(@stacktrace_regex, &1) &&
+                                                 !Regex.match?(@exception_header_regex, &1)),
+                                                 fn(lineno) ->
         Regex.replace(@type_regex, lineno, "")
       end
 

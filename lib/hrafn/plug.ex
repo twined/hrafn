@@ -9,9 +9,9 @@ defmodule Hrafn.Plug do
   end
 
   defmacro __before_compile__(env) do
-    otp_app = Module.get_attribute(env.module, :otp_app)
+    otp_app            = Module.get_attribute(env.module, :otp_app)
     ignored_exceptions = Application.get_env(:hrafn, :ignored_exceptions, [])
-    public_dsn = Application.get_env(:hrafn, :public_dsn, nil)
+    public_dsn         = Application.get_env(:hrafn, :public_dsn, nil)
 
     quote location: :keep do
       defoverridable [call: 2]
@@ -50,6 +50,7 @@ defmodule Hrafn.Plug do
                   exception.conn.private
                   |> Map.put(:hrafn_event_id, options.event_id)
                   |> Map.put(:hrafn_public_dsn, unquote(public_dsn))
+                  
                 put_in(exception.conn.private, private)
               end
 

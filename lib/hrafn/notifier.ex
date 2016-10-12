@@ -6,7 +6,7 @@ defmodule Hrafn.Notifier do
   @logger "Hrafn"
 
   def notify(error, opts) do
-    with {:ok, dsn} <- get_dsn,
+    with {:ok, dsn}     <- get_dsn,
          {:ok, :notify} <- should_notify
       do build_notification(error, opts)
          |> send_notification(dsn)
@@ -43,7 +43,7 @@ defmodule Hrafn.Notifier do
       |> Tuple.to_list
       |> Enum.join(".")
 
-    %Hrafn.Event{
+    event = %Hrafn.Event{
       event_id:    opts.event_id,
       message:     error.message,
       tags:        Application.get_env(:hrafn, :tags, %{}),
@@ -52,6 +52,8 @@ defmodule Hrafn.Notifier do
       environment: Application.get_env(:hrafn, :environment, nil),
       level:       Application.get_env(:hrafn, :logger_level, "error")
     }
+
+    event
     |> add_logger
     |> add_device
     |> add_error(error)
@@ -121,9 +123,9 @@ defmodule Hrafn.Notifier do
     exception = %{
       type: error.type,
       value: error.message
-    } |> add_stacktrace(error.backtrace)
+    }
 
-    Map.put(payload, :exception, [exception])
+    Map.put(payload, :exception, [add_stacktrace(exception, error.backtrace)])
   end
 
   defp add_stacktrace(exception, nil), do: exception
