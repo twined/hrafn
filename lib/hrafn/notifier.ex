@@ -1,4 +1,7 @@
 defmodule Hrafn.Notifier do
+  @moduledoc """
+  Builds the actual notification and sends it to Sentry
+  """
   use HTTPoison.Base
 
   @sentry_version 7

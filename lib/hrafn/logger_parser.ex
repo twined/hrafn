@@ -1,4 +1,7 @@
 defmodule Hrafn.LoggerParser do
+  @moduledoc """
+  Parses stacktrace and exception headers
+  """
   @stacktrace_regex ~r/^\s*(?<filename>\([^()]+\)\s+[^:]+):(?<lineno>\d+):(?<function>.*)/m
   @type_regex ~r/^\s*\*\*\s*\((?<type>[^()]+)\)/m
   @exception_header_regex ~r/an exception was raised:/

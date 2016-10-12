@@ -1,4 +1,7 @@
 defmodule Hrafn.ExceptionParser do
+  @moduledoc """
+  Logic for parsing exception into Hrafn.Exception struct
+  """
   def parse(exception) do
     %Hrafn.Exception{
       type: exception.__struct__,
@@ -28,8 +31,11 @@ defmodule Hrafn.ExceptionParser do
     "/#{args}"
   end
   defp args(args) when is_list(args) do
-    "(#{args
-        |> Enum.map(&(inspect(&1)))
-        |> Enum.join(", ")})"
+    args =
+      args
+      |> Enum.map(&(inspect(&1)))
+      |> Enum.join(", ")
+
+    "(#{args})"
   end
 end

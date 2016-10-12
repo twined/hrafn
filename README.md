@@ -1,3 +1,5 @@
+# Hrafn
+
 ## Installation
 
 Add Hrafn as a dependency to your `mix.exs` file:

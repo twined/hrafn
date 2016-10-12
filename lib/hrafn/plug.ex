@@ -1,4 +1,7 @@
 defmodule Hrafn.Plug do
+  @moduledoc """
+  Inserts Hrafn into plug pipeline and grabs exceptions
+  """
 
   defmacro __using__(opts) do
     otp_app = Keyword.fetch!(opts, :otp_app)
@@ -50,7 +53,7 @@ defmodule Hrafn.Plug do
                   exception.conn.private
                   |> Map.put(:hrafn_event_id, options.event_id)
                   |> Map.put(:hrafn_public_dsn, unquote(public_dsn))
-                  
+
                 put_in(exception.conn.private, private)
               end
 

@@ -1,4 +1,7 @@
 defmodule Hrafn.LoggerBackend do
+  @moduledoc """
+  Backend for Logger integration
+  """
   use GenEvent
 
   def init(__MODULE__) do
