@@ -40,6 +40,7 @@ defmodule Hrafn.Mixfile do
       {:poison, "~> 2.2 or ~> 3.0"},
       {:plug, "~> 1.2"},
       {:uuid, "~> 1.1"},
+      {:ex_doc, ">= 0.0.0", only: :dev},
     ]
   end
 end
