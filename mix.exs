@@ -6,9 +6,7 @@ defmodule Hrafn.Mixfile do
       app: :hrafn,
       version: "0.1.0",
       elixir: "~> 1.2",
-      description: """
-      Hrafn client for Twined projects
-      """,
+      description: "Hrafn client for Twined projects",
       package: package,
       deps: deps
    ]
