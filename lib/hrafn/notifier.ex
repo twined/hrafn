@@ -9,10 +9,11 @@ defmodule Hrafn.Notifier do
   @logger "Hrafn"
 
   def notify(error, opts) do
-    with {:ok, dsn}     <- get_dsn,
-         {:ok, :notify} <- should_notify
-      do build_notification(error, opts)
-         |> send_notification(dsn)
+    with {:ok, dsn}     <- get_dsn(),
+         {:ok, :notify} <- should_notify()
+    do
+      build_notification(error, opts)
+      |> send_notification(dsn)
     end
   end
 
@@ -50,8 +51,8 @@ defmodule Hrafn.Notifier do
       event_id:    opts.event_id,
       message:     error.message,
       tags:        Application.get_env(:hrafn, :tags, %{}),
-      server_name: :net_adm.localhost |> to_string,
-      timestamp:   iso8601_timestamp,
+      server_name: to_string(:net_adm.localhost),
+      timestamp:   iso8601_timestamp(),
       environment: Application.get_env(:hrafn, :environment, nil),
       level:       Application.get_env(:hrafn, :logger_level, "error")
     }
@@ -159,7 +160,7 @@ defmodule Hrafn.Notifier do
   Generates a Sentry API authorization header.
   """
   def authorization_header(public_key, secret_key, timestamp \\ nil) do
-    timestamp = timestamp && timestamp || unix_timestamp
+    timestamp = timestamp && timestamp || unix_timestamp()
     "Sentry sentry_version=#{@sentry_version}, sentry_client=#{@sentry_client}, " <>
     "sentry_timestamp=#{timestamp}, sentry_key=#{public_key}, sentry_secret=#{secret_key}"
   end

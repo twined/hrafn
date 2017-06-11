@@ -4,7 +4,7 @@ defmodule Hrafn.Mixfile do
   def project do
     [
       app: :hrafn,
-      version: "0.1.1",
+      version: "0.1.2",
       elixir: "~> 1.2",
       description: "Hrafn client for Twined projects",
       package: package(),

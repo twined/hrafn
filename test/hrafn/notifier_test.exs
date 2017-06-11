@@ -42,13 +42,13 @@ defmodule Hrafn.NotifierTest do
     assert List.first(notification.exception)[:type] == FunctionClauseError
     assert List.first(notification.exception)[:value] == "no function clause matching in IO.inspect/3"
     assert List.first(notification.exception)[:stacktrace][:frames] == [
-      %Hrafn.Stacktrace{filename: "(Elixir.IO) lib/io.ex", function: "inspect(\"test\", [], \"\")", lineno: 258}, %Hrafn.Stacktrace{filename: "(Elixir.Hrafn.NotifierTest) test/hrafn/notifier_test.exs", function: "test should correctly serialize exception/1", lineno: 30}, %Hrafn.Stacktrace{filename: "(Elixir.ExUnit.Runner) lib/ex_unit/runner.ex", function: "exec_test/1", lineno: 296}, %Hrafn.Stacktrace{filename: "(timer) timer.erl", function: "tc/1", lineno: 166}, %Hrafn.Stacktrace{filename: "(Elixir.ExUnit.Runner) lib/ex_unit/runner.ex", function: "-spawn_test/3-fun-1-/3", lineno: 246}]
+      %Hrafn.Stacktrace{filename: "(Elixir.IO) lib/io.ex", function: "inspect(\"test\", [], \"\")", lineno: 290}, %Hrafn.Stacktrace{filename: "(Elixir.Hrafn.NotifierTest) test/hrafn/notifier_test.exs", function: "test should correctly serialize exception/1", lineno: 30}, %Hrafn.Stacktrace{filename: "(Elixir.ExUnit.Runner) lib/ex_unit/runner.ex", function: "exec_test/1", lineno: 302}, %Hrafn.Stacktrace{filename: "(timer) timer.erl", function: "tc/1", lineno: 166}, %Hrafn.Stacktrace{filename: "(Elixir.ExUnit.Runner) lib/ex_unit/runner.ex", function: "-spawn_test/3-fun-1-/3", lineno: 250}]
     assert notification.extra == %{request_id: [], session: %{}}
     assert notification.level == "error"
     assert notification.logger == "Hrafn"
     assert notification.message == "no function clause matching in IO.inspect/3"
     assert notification.platform == "other"
-    
+
     assert notification.server_name != nil
     assert notification.tags == %{}
     assert notification.timestamp != nil
@@ -89,7 +89,7 @@ defmodule Hrafn.NotifierTest do
     assert notification.logger == "Hrafn"
     assert notification.message == " expected at least one result but got none in query:\n\nfrom g in Test.Game,\n  where: g.id == ^\"d8fe9f04-8fda-4d8f-9473-67ba94dc9458\"\n\n"
     assert notification.platform == "other"
-    
+
     assert notification.server_name != nil
     assert notification.tags == %{}
     assert notification.timestamp != nil
